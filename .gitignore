@@ -1,0 +1,26 @@
+# Arquivos executáveis
+*.exe
+*.out
+*.app
+
+# Arquivos de objeto e bibliotecas compiladas
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dll
+
+# Arquivos de dependência gerados pelo compilador
+*.d
+
+# Pasta de build/compilação
+/build/
+/bin/
+/obj/
+
+# Arquivos de configuração de IDEs e editores
+.vscode/
+.idea/
+*.swp
+*~
