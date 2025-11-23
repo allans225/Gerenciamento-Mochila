@@ -7,6 +7,9 @@ void inserirItem(struct Item *mochila, int *slotsUsados, int *espacoOcupado, int
 void removerItem(struct Item *mochila, int *slotsUsados, int *espacoOcupado);
 void listarItens(const struct Item *mochila, int slotsUsados, int espacoOcupado, int capacidade_maxima);
 void ordenarItensPorNome(struct Item *mochila, int slotsUsados);
+void ordenarItensPorPrioridade(struct Item *mochila, int slotsUsados);
+void ordenarItensPorTipo(struct Item *mochila, int slotsUsados);
+
 /**
  * @param comparacoes Ponteiro para um int que será incrementado a cada 'strcmp'.
  * Retorna o índice do item se encontrado, ou -1 se não.

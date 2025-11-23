@@ -16,6 +16,9 @@ static void definirItem(struct Item *item) {
 
     printf("Quantidade do Item: ");
     scanf("%d", &item->quantidade);
+
+    printf("Prioridade do Item (0-10): ");
+    scanf("%d", &item->prioridade);
     limparBuffer();
 }
 
@@ -87,12 +90,13 @@ void listarItens(const struct Item *mochila, int slotsUsados, int espacoOcupado,
     }
     
     for (int i = 0; i < slotsUsados; i++) {
-        printf("Slot %d. Nome: %s\t|\tTipo: %s\t|\tQuantidade: %d\n", i + 1,
-               mochila[i].nome, mochila[i].tipo, mochila[i].quantidade);
+        printf("Slot %d. Nome: %s\t|\tTipo: %s\t|\tQuantidade: %d\t|\tPrioridade: %d\n",
+            i + 1, mochila[i].nome, mochila[i].tipo, mochila[i].quantidade, mochila[i].prioridade);
     }
     printf("---------------------------\n");
 }
 
+// Selection Sort para ordenar itens por nome (alfabético)
 void ordenarItensPorNome(struct Item *mochila, int slotsUsados) {
     // Se não há itens ou há apenas 1, não precisa ordenar
     if (slotsUsados < 2) {
@@ -127,6 +131,56 @@ void ordenarItensPorNome(struct Item *mochila, int slotsUsados) {
             mochila[i] = mochila[indiceDoMenor];
             mochila[indiceDoMenor] = temp;
         }
+    }
+}
+
+// Bubble Sort para ordenar itens por prioridade (decrescente)
+void ordenarItensPorPrioridade(struct Item *mochila, int slotsUsados) {
+    int i, j;
+    struct Item temp; // Var temporária para auxiliar na troca
+
+    // Laço Externo: controla o número de passadas
+    // Vai até slotsUsados - 1 pois o último elemento já estará ordenado
+
+    for (i = 0; i < slotsUsados - 1; i++) {
+        // Laço Interno: compara os elementos adjacentes
+        // O "- i" serve para não verificar novamente os itens que já foram 
+        // ordenados e colocados no final nas passadas anteriores
+
+        for (j = 0; j < slotsUsados - i - 1; j++) {
+            // CONDIÇÃO DE ORDENAÇÃO DECRESCENTE (MAIOR -> MENOR)
+            if (mochila[j].prioridade < mochila[j + 1].prioridade) {
+                // Realiza a troca de estruturas inteiras
+                temp = mochila[j];
+                mochila[j] = mochila[j + 1];
+                mochila[j + 1] = temp;
+            }
+        }
+    }
+}
+
+// Insertion Sort para ordenar itens por tipo (alfabético)
+void ordenarItensPorTipo(struct Item *mochila, int slotsUsados) {
+    int i, j;
+    struct Item chave; // Var para guardar o item que estamos movendo
+
+    // Começa do segundo item (índice 1) até o final
+    for (i = 1; i < slotsUsados; i++) {
+        
+        chave = mochila[i]; // Pega o item na posição i da mochila
+        j = i - 1;
+
+        // O Loop while faz duas coisas:
+        // não passa do início do array (j >= 0).
+        // Verifica se o item anterior (mochila[j]) é "maior" alfabeticamente que a nossa chave
+        //    strcmp > 0 significa que mochila[j].tipo vem DEPOIS da chave.tipo no alfabeto.
+        while (j >= 0 && strcmp(mochila[j].tipo, chave.tipo) > 0) {
+            // Se o item anterior for maior, empurra ele para a direita
+            mochila[j + 1] = mochila[j];
+            j = j - 1; // Recua para comparar com o próximo anterior
+        }
+        // Encontra a posiçao correta e coloca a chave lá.
+        mochila[j + 1] = chave;
     }
 }
 

@@ -6,7 +6,7 @@
 #include "utils.h"   // Inclui o limpador buffer
 
 #define CAPACIDADE_MAXIMA 50 // O "peso" máximo que a mochila aguenta
-#define MAX_SLOTS 10         // O número de tipos de itens diferentes
+#define MAX_SLOTS 20         // O número de tipos de itens diferentes
 
 int main() {
     struct Item *mochila = malloc(MAX_SLOTS * sizeof(struct Item));
@@ -17,16 +17,19 @@ int main() {
     
     int slotsUsados = 0;    // Contador para número de slots para itens diferentes na mochila
     int espacoOcupado = 0;  // Contador para o "peso" total dos itens na mochila
-    int opcao;
-
+    int ordenacaoNome = 0;  // Flag para verificar se a mochila está ordenada por nome
+    int opcaoOrdenacao;     // Variável para o menu de ordenação
+    int opcao;              // Variável para o menu principal
+    
     printf("Sistema de Gerenciamento de Mochila (Sequencial)\n");
     do {
         printf("\n1. Inserir Item\n");
         printf("2. Remover Item\n");
         printf("3. Listar Itens\n");
-        printf("4. Buscar Item (Busca Binaria Recursiva)\n");
-        printf("5. Buscar Item (Busca Sequencial Iterativa)\n");
-        printf("6. Sair\n");
+        printf("4. Organizar mochila (Ordenar Componentes)\n");
+        printf("5. Buscar Item (Busca Binaria Recursiva)\n");
+        printf("6. Buscar Item (Busca Sequencial Iterativa)\n");
+        printf("0. Ativar Torre de Fuga (Sair)\n");
         printf("Escolha uma opcao: ");
         scanf("%d", &opcao);
         limparBuffer();
@@ -34,7 +37,7 @@ int main() {
         switch (opcao) {
             case 1:
                 inserirItem(mochila, &slotsUsados, &espacoOcupado, MAX_SLOTS, CAPACIDADE_MAXIMA);
-                ordenarItensPorNome(mochila, slotsUsados);
+                printf("\n");
                 break;
             case 2:
                 if (slotsUsados == 0) {
@@ -42,15 +45,65 @@ int main() {
                 } else {
                     removerItem(mochila, &slotsUsados, &espacoOcupado);
                 }
+                printf("\n");
                 break;
             case 3:
                 listarItens(mochila, slotsUsados, espacoOcupado, CAPACIDADE_MAXIMA);
                 break;
             case 4: {
                 if (slotsUsados == 0) {
+                    printf("Mochila vazia! Nao ha itens para ordenar.\n");
+                    break;
+                }
+
+                do {
+                    printf("\n--- Menu de Ordenacao ---\n");
+                    printf("1. Ordenar por Nome (Selection Sort)\n");
+                    printf("2. Ordenar por Tipo (Insertion Sort)\n");
+                    printf("3. Ordenar por Prioridade (Bubble Sort)\n");
+                    printf("4. Voltar ao Menu Principal\n");
+                    printf("Escolha uma opcao: ");
+                    scanf(" %d", &opcaoOrdenacao);
+                    limparBuffer();
+    
+                    switch (opcaoOrdenacao) {
+                        case 1:
+                            ordenarItensPorNome(mochila, slotsUsados);
+                            ordenacaoNome = 1; // true = está ordenada por nome
+                            printf("Mochila ordenada por nome com sucesso!\n");
+                            break;
+                        case 2:
+                            ordenarItensPorTipo(mochila, slotsUsados);
+                            ordenacaoNome = 0; // false
+                            printf("Mochila ordenada por tipo com sucesso!\n");
+                            break;
+                        case 3:
+                            ordenarItensPorPrioridade(mochila, slotsUsados);
+                            ordenacaoNome = 0; // false
+                            printf("Mochila ordenada por prioridade com sucesso!\n");
+                            break;
+                        case 4:
+                            printf("Voltando ao menu principal...\n");
+                            break;
+                        default:
+                            printf("Opcao invalida! Tente novamente.\n");
+                            break;
+                    }
+                } while (opcaoOrdenacao != 4);
+                break;
+            }
+            case 5: {
+                if (slotsUsados == 0) {
                     printf("Mochila vazia! Nao ha itens para buscar.\n");
                     break;
                 }
+
+                if (!ordenacaoNome) {
+                    printf("ALERTA: A busca binaria requer que a mochila esteja ordenada por NOME.\n");
+                    printf("Use a opção 4 para organizar a mochila primeiro.\n");
+                    break;
+                }
+
                 char nomeBusca[30];
                 printf("Digite o nome exato do item a buscar: ");
                 fgets(nomeBusca, sizeof(nomeBusca), stdin);
@@ -72,7 +125,7 @@ int main() {
                 printf(">>> Numero de comparacoes (Binaria): %d\n", comparacoes);
                 break;
             }
-            case 5: {
+            case 6: {
                 if (slotsUsados == 0) {
                     printf("Mochila vazia! Nao ha itens para buscar.\n");
                     break;
@@ -98,13 +151,13 @@ int main() {
                 printf(">>> Numero de comparacoes (Sequencial) %d\n", comparacoes);
                 break;
             }
-            case 6:
+            case 0:
                 printf("Saindo do sistema...\n");
                 break;
             default:
                 printf("Opcao invalida! Tente novamente.\n");
         }
-    } while (opcao != 4);
+    } while (opcao != 0);
     free(mochila);
     return 0;
 }
